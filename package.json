@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
@@ -42,8 +41,11 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
+    "csv-parser": "latest",
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.5.1",
+    "formidable": "latest",
+    "fs": "latest",
     "google-auth-library": "latest",
     "google-spreadsheet": "latest",
     "input-otp": "1.4.1",
@@ -72,10 +74,3 @@
     "typescript": "^5"
   }
 }
-=======
-    "csv-parser": "^3.2.0",
-    "formidable": "^3.5.4",
-    "googleapis": "^124.0.0"
-  }
-}
->>>>>>> f95dee6 (Add upload API for CSV to Sheets)
