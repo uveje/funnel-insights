@@ -19,12 +19,41 @@ export async function getGoogleSheetsClient() {
       throw new Error("GOOGLE_SPREADSHEET_ID environment variable is missing")
     }
 
+    console.log("Processing private key...")
+
+    // Clean and format the private key properly
+    let privateKey = process.env.GOOGLE_SHEETS_PRIVATE_KEY
+
+    // Remove any extra quotes that might be wrapping the key
+    privateKey = privateKey.replace(/^["']|["']$/g, "")
+
+    // Replace literal \n with actual newlines
+    privateKey = privateKey.replace(/\\n/g, "\n")
+
+    // Ensure the key has proper BEGIN/END markers
+    if (!privateKey.includes("-----BEGIN PRIVATE KEY-----")) {
+      throw new Error("Private key must include '-----BEGIN PRIVATE KEY-----' header")
+    }
+
+    if (!privateKey.includes("-----END PRIVATE KEY-----")) {
+      throw new Error("Private key must include '-----END PRIVATE KEY-----' footer")
+    }
+
+    console.log("Private key format validation passed")
+    console.log("Key starts with:", privateKey.substring(0, 50) + "...")
+    console.log("Key ends with:", "..." + privateKey.substring(privateKey.length - 50))
+
     console.log("Creating JWT auth...")
     const serviceAccountAuth = new JWT({
       email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
-      key: process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+      key: privateKey,
       scopes: ["https://www.googleapis.com/auth/spreadsheets"],
     })
+
+    console.log("Testing JWT authentication...")
+    // Test the authentication before proceeding
+    await serviceAccountAuth.authorize()
+    console.log("JWT authentication successful")
 
     console.log("Creating GoogleSpreadsheet instance...")
     const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID!, serviceAccountAuth)
@@ -33,9 +62,24 @@ export async function getGoogleSheetsClient() {
     await doc.loadInfo()
 
     console.log("Spreadsheet loaded successfully:", doc.title)
+    console.log("Spreadsheet ID:", doc.spreadsheetId)
     return doc
   } catch (error) {
     console.error("Failed to initialize Google Sheets client:", error)
+
+    // Provide more specific error messages
+    if (error instanceof Error) {
+      if (error.message.includes("DECODER")) {
+        throw new Error(
+          "Private key format error. Please check that your GOOGLE_SHEETS_PRIVATE_KEY is properly formatted with correct BEGIN/END markers and newlines.",
+        )
+      } else if (error.message.includes("403")) {
+        throw new Error("Permission denied. Make sure the spreadsheet is shared with your service account email.")
+      } else if (error.message.includes("404")) {
+        throw new Error("Spreadsheet not found. Check your GOOGLE_SPREADSHEET_ID.")
+      }
+    }
+
     throw error
   }
 }
