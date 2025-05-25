@@ -40,8 +40,6 @@ export async function getGoogleSheetsClient() {
     }
 
     console.log("Private key format validation passed")
-    console.log("Key starts with:", privateKey.substring(0, 50) + "...")
-    console.log("Key ends with:", "..." + privateKey.substring(privateKey.length - 50))
 
     console.log("Creating JWT auth...")
     const serviceAccountAuth = new JWT({

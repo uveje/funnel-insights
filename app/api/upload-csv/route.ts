@@ -83,3 +83,13 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+// Add GET method for debugging
+export async function GET() {
+  return NextResponse.json({
+    message: "CSV Upload endpoint is working",
+    method: "POST",
+    endpoint: "/api/upload-csv",
+    timestamp: new Date().toISOString(),
+  })
+}
