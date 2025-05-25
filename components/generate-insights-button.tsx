@@ -44,7 +44,7 @@ export function GenerateInsightsButton() {
 
   return (
     <div className="space-y-4">
-      <Button onClick={handleGenerate} disabled={isGenerating} className="flex items-center gap-2">
+      <Button onClick={handleGenerate} disabled={isGenerating} className="w-full flex items-center gap-2">
         {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
         {isGenerating ? "Generating Insights..." : "Generate Insights"}
       </Button>
